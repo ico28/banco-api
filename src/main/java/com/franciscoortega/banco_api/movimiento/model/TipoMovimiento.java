@@ -1,4 +1,4 @@
-package com.franciscoortega.banco_api.movimiento;
+package com.franciscoortega.banco_api.movimiento.model;
 
 public enum TipoMovimiento {
     INGRESO,

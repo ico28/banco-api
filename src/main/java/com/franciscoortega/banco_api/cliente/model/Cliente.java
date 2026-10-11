@@ -1,6 +1,8 @@
-package com.franciscoortega.banco_api.cliente;
+package com.franciscoortega.banco_api.cliente.model;
 
 import java.time.OffsetDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,6 +30,7 @@ public class Cliente {
     private String apellidos;
     private String email;
 
-    @Column(name = "fecha_alta")
-    private OffsetDateTime fechaAlta;
+    @CreationTimestamp
+    @Column(name = "fecha_alta", updatable = false)
+    private OffsetDateTime fechaAlta;;
 }

@@ -1,9 +1,9 @@
-package com.franciscoortega.banco_api.movimiento;
+package com.franciscoortega.banco_api.movimiento.model;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
-import com.franciscoortega.banco_api.cuenta.Cuenta;
+import com.franciscoortega.banco_api.cuenta.model.Cuenta;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

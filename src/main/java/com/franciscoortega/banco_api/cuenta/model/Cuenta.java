@@ -1,11 +1,11 @@
-package com.franciscoortega.banco_api.cuenta;
+package com.franciscoortega.banco_api.cuenta.model;
 
 import java.time.OffsetDateTime;
 
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import com.franciscoortega.banco_api.cliente.Cliente;
+import com.franciscoortega.banco_api.cliente.model.Cliente;
 
 import java.math.BigDecimal;
 
