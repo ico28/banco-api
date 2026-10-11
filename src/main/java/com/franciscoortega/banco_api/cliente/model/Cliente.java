@@ -1,4 +1,4 @@
-package com.franciscoortega.banco_api.cliente;
+package com.franciscoortega.banco_api.cliente.model;
 
 import java.time.OffsetDateTime;
 
