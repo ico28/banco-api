@@ -2,6 +2,7 @@ package com.franciscoortega.banco_api.cuenta.model;
 
 import java.time.OffsetDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -44,7 +45,8 @@ public class Cuenta {
     @Column(length = 3)
     private String divisa;
     
-    @Column(name = "fecha_creacion")
+    @CreationTimestamp 
+    @Column(name = "fecha_creacion", updatable = false)
     private OffsetDateTime fechaCreacion;
 
 }
