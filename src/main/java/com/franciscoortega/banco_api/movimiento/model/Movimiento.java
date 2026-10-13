@@ -3,6 +3,8 @@ package com.franciscoortega.banco_api.movimiento.model;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.franciscoortega.banco_api.cuenta.model.Cuenta;
 
 import jakarta.persistence.Column;
@@ -41,8 +43,8 @@ public class Movimiento {
     private BigDecimal importe;
     private BigDecimal saldoResultante;
 
-
-    @Column(name = "fecha_creacion")
+    @CreationTimestamp
+    @Column(name = "fecha_creacion", updatable = false)
     private OffsetDateTime fechaCreacion;
     
 }
