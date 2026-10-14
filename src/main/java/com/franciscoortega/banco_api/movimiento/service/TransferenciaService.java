@@ -25,16 +25,24 @@ public class TransferenciaService {
 
     @Transactional
     public TransferenciaResponse transferir(TransferenciaRequest request){
-        Cuenta cuentaOrigen = cuentaRepository.findById(request.cuentaOrigenId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No se ha encontrado la cuenta origen con id " + request.cuentaOrigenId()));
-        Cuenta cuentaDestino = cuentaRepository.findByIban(request.ibanDestino()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No se ha encontrado la cuenta destino con iban " + request.ibanDestino()));
-
-        if (cuentaDestino.getId().equals(cuentaOrigen.getId())){
+        Long idCuentaDestino = cuentaRepository.findIdByIban(request.ibanDestino()).orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "No se ha podido encontrar la cuenta con este IBAN: " + request.ibanDestino()));
+        
+        if (idCuentaDestino.equals(request.cuentaOrigenId())){
             throw new ResponseStatusException(HttpStatusCode.valueOf(422), "No se pueden realizar transferencias en la misma cuenta bancaria");
         }
-
-        if (!cuentaDestino.getDivisa().equals(cuentaOrigen.getDivisa())){
+        
+        Long idMenor = Math.min(request.cuentaOrigenId(), idCuentaDestino);
+        Long idMayor = Math.max(request.cuentaOrigenId(), idCuentaDestino);
+        
+        Cuenta c1 = cuentaRepository.findByIdForUpdate(idMenor).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No se ha encontrado la cuenta con id " + idMenor));
+        Cuenta c2 = cuentaRepository.findByIdForUpdate(idMayor).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No se ha encontrado la cuenta con id " + idMayor));
+        
+        if (!c1.getDivisa().equals(c2.getDivisa())){
             throw new ResponseStatusException(HttpStatusCode.valueOf(422), "No se pueden realizar transferencias con diferente divisa");
         }
+
+        Cuenta cuentaOrigen = c1.getId().equals(request.cuentaOrigenId()) ? c1 : c2;
+        Cuenta cuentaDestino = c1.getId().equals(request.cuentaOrigenId()) ? c2 : c1;
 
         if (cuentaOrigen.getSaldo().compareTo(request.importe())<0){
             throw new ResponseStatusException(HttpStatusCode.valueOf(422), "El saldo de la cuenta origen no es suficiente");

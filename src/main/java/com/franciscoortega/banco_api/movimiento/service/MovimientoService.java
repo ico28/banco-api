@@ -28,7 +28,7 @@ public class MovimientoService {
     @Transactional
     public MovimientoResponse ingresar(MovimientoRequest request, Long idCuenta) {
 
-        Cuenta cuenta = cuentaRepository.findById(idCuenta)
+        Cuenta cuenta = cuentaRepository.findByIdForUpdate(idCuenta)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Cuenta no encontrada " + idCuenta));
         BigDecimal nuevoSaldo = cuenta.getSaldo().add(request.importe());
@@ -46,7 +46,7 @@ public class MovimientoService {
     @Transactional
     public MovimientoResponse retirar(MovimientoRequest request, Long idCuenta) {
 
-        Cuenta cuenta = cuentaRepository.findById(idCuenta)
+        Cuenta cuenta = cuentaRepository.findByIdForUpdate(idCuenta)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Cuenta no encontrada con id: " + idCuenta));
         BigDecimal nuevoSaldo = cuenta.getSaldo().subtract(request.importe());
