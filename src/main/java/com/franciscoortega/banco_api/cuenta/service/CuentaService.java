@@ -2,9 +2,12 @@ package com.franciscoortega.banco_api.cuenta.service;
 
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,5 +52,21 @@ public class CuentaService {
     public CuentaResponse obtenerCuenta(Long id){
         Cuenta cuenta = cuentaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No se ha podido encontrar la cuenta con id " + id));
         return CuentaResponse.from(cuenta);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CuentaResponse> listarPorCliente(Long id){
+        if (!clienteRepository.existsById(id)){
+            throw new ResponseStatusException(HttpStatusCode.valueOf(404), "El cliente con id: " + id + " no existe");
+        }
+
+        List<Cuenta> cuentas = cuentaRepository.findByClienteId(id);
+        List<CuentaResponse> toRet = new ArrayList<>();
+
+        for (Cuenta cuenta : cuentas){
+            toRet.add(CuentaResponse.from(cuenta));
+        }
+
+        return toRet;
     }
 }

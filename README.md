@@ -46,11 +46,31 @@ Documentación interactiva (Swagger UI): `http://localhost:8080/swagger-ui/index
 | POST | `/api/clientes` | Crea un cliente | 201 |
 | GET | `/api/clientes/{id}` | Consulta un cliente | 200 |
 | POST | `/api/cuentas` | Crea una cuenta para un cliente | 201 |
+| GET | `/api/cuentas?clienteId={id}` | Lista las cuentas de un cliente | 200 |
 | GET | `/api/cuentas/{id}` | Consulta una cuenta y su saldo | 200 |
 | POST | `/api/cuentas/{id}/ingresos` | Ingresa dinero en una cuenta | 201 |
 | POST | `/api/cuentas/{id}/retiradas` | Retira dinero de una cuenta | 201 |
-| GET | `/api/cuentas/{id}/movimientos` | Historial de la cuenta, del más reciente al más antiguo | 200 |
+| GET | `/api/cuentas/{id}/movimientos?page=0&size=20` | Historial paginado de la cuenta, del más reciente al más antiguo | 200 |
 | POST | `/api/transferencias` | Transfiere dinero entre dos cuentas | 201 |
+
+### Paginación del historial
+
+El historial se devuelve por páginas:
+
+- `page`: número de página, empezando en 0 (por defecto, 0).
+- `size`: elementos por página, entre 1 y 100 (por defecto, 20).
+
+```json
+{
+  "contenido": [],
+  "pagina": 0,
+  "tamano": 20,
+  "totalElementos": 25,
+  "totalPaginas": 2
+}
+```
+
+`contenido` contiene los movimientos de la página, ordenados por fecha descendente y, en caso de empate, por id.
 
 ### Ejemplos de cuerpo
 
@@ -93,7 +113,7 @@ Todos los errores usan el formato estándar `ProblemDetail` (RFC 9457), sin expo
 
 | Código | Cuándo |
 |--------|--------|
-| 400 | Datos no válidos (incluye el detalle por campo) o JSON mal formado |
+| 400 | Datos no válidos (incluye el detalle por campo), parámetros de paginación fuera de rango o JSON mal formado |
 | 404 | El cliente o la cuenta no existen |
 | 409 | Conflicto de datos, por ejemplo un documento duplicado |
 | 422 | Regla de negocio incumplida: saldo insuficiente, divisas distintas o transferencia a la misma cuenta |
@@ -144,6 +164,8 @@ erDiagram
 - **Sin interbloqueos en transferencias.** Las dos cuentas se bloquean siempre en orden creciente de id, sea cual sea el sentido de la transferencia. El id de la cuenta destino se obtiene a partir del IBAN sin cargar la entidad, para no trabajar con un saldo obsoleto.
 - **DTOs inmutables con `record`** y validación con Jakarta Validation. Las entidades nunca se exponen directamente.
 - **Errores centralizados** con `@RestControllerAdvice` y `ProblemDetail`.
+- **Historial paginado con orden estable.** Se ordena por fecha y, en caso de empate, por id, para que dos peticiones consecutivas nunca repitan ni se salten movimientos.
+- **Respuesta de página propia.** La API devuelve un `PaginaResponse` en lugar del `Page` de Spring Data, para que el formato JSON no dependa de una clase interna del framework.
 
 ## Estructura del proyecto
 

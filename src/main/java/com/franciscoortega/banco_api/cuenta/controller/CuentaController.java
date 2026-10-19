@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.franciscoortega.banco_api.common.PaginaResponse;
 import com.franciscoortega.banco_api.cuenta.dto.CuentaRequest;
 import com.franciscoortega.banco_api.cuenta.dto.CuentaResponse;
 import com.franciscoortega.banco_api.cuenta.service.CuentaService;
@@ -17,9 +18,13 @@ import com.franciscoortega.banco_api.movimiento.dto.MovimientoResponse;
 import com.franciscoortega.banco_api.movimiento.service.MovimientoService;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController 
@@ -42,8 +47,8 @@ public class CuentaController {
     }
 
     @GetMapping("/{id}/movimientos")
-    public List<MovimientoResponse> historial(@PathVariable Long id){
-        return movimientoService.historial(id);
+    public PaginaResponse<MovimientoResponse> historial(@PathVariable Long id, @RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size){
+        return movimientoService.historial(id, page, size);
     } 
 
     @PostMapping("/{id}/ingresos")
@@ -58,6 +63,10 @@ public class CuentaController {
         return movimientoService.retirar(request, id);
     }
     
+    @GetMapping
+    public List<CuentaResponse> listarCuentas(@RequestParam Long id) {
+        return cuentaService.listarPorCliente(id);
+    }
     
 
 }

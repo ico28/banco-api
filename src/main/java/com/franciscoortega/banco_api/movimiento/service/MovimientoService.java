@@ -1,13 +1,16 @@
 package com.franciscoortega.banco_api.movimiento.service;
 
 import java.math.BigDecimal;
-import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.data.domain.Pageable;
 
+import com.franciscoortega.banco_api.common.PaginaResponse;
 import com.franciscoortega.banco_api.cuenta.model.Cuenta;
 import com.franciscoortega.banco_api.cuenta.repository.CuentaRepository;
 import com.franciscoortega.banco_api.movimiento.dto.MovimientoRequest;
@@ -65,14 +68,16 @@ public class MovimientoService {
     }
 
     @Transactional(readOnly = true)
-    public List<MovimientoResponse> historial(Long idCuenta) {
+    public PaginaResponse<MovimientoResponse> historial(Long idCuenta, int pagina, int tam) {
         if (!cuentaRepository.existsById(idCuenta)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
                     "Cuenta no encontrada con id " + idCuenta);
         }
 
-        List<Movimiento> movimientos = movimientoRepository.findByCuentaIdOrderByFechaCreacionDesc(idCuenta);
-        return movimientos.stream().map(MovimientoResponse::from).toList();
+        Sort orden = Sort.by(Sort.Order.desc("fechaCreacion"), Sort.Order.desc("id"));
+        Pageable pageable = PageRequest.of(pagina, tam, orden);
+
+        return PaginaResponse.from(movimientoRepository.findByCuentaId(idCuenta, pageable), MovimientoResponse::from);
 
     }
 }
