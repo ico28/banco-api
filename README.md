@@ -176,12 +176,3 @@ Para ejecutar solo esos tests:
 ```bash
 ./mvnw test -Dtest="MovimientoConcurrenciaTest,TransferenciasConcurrenciaTest"
 ```
-
-## Próximos pasos
-
-- [ ] Aplicación y base de datos en un único `docker compose`, con configuración por variables de entorno
-- [ ] Integración continua con GitHub Actions
-- [ ] Listado de cuentas por cliente y paginación del historial
-- [ ] Autenticación con Spring Security y JWT
-- [ ] Frontend en React
-- [ ] Cierre mensual con Spring Batch
