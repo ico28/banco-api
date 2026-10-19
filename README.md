@@ -166,8 +166,7 @@ erDiagram
 - **Errores centralizados** con `@RestControllerAdvice` y `ProblemDetail`.
 - **Historial paginado con orden estable.** Se ordena por fecha y, en caso de empate, por id, para que dos peticiones consecutivas nunca repitan ni se salten movimientos.
 - **Respuesta de página propia.** La API devuelve un `PaginaResponse` en lugar del `Page` de Spring Data, para que el formato JSON no dependa de una clase interna del framework.
-
-## Estructura del proyecto
+´/## Estructura del proyecto
 
 El código se organiza por funcionalidad y, dentro de cada una, por capas:
 
